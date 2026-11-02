@@ -1,0 +1,16 @@
+# Build & Compilation Artifacts
+*.class
+*.jar
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.swp
+*~
+.DS_Store
+
+# Credentials & Runtime State
+.env
+stagger_state.json
+autocommit.log
