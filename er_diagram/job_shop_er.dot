@@ -1,235 +1,149 @@
 digraph JobShopER {
-    rankdir=TB;
-    nodesep=0.6;
-    ranksep=0.7;
-    splines=polyline;
+    rankdir=LR;
+    nodesep=0.45;
+    ranksep=0.55;
+    splines=spline;
     fontname="Helvetica";
     node [fontname="Helvetica", fontsize=9];
     edge [fontname="Helvetica", fontsize=8, color="#333333"];
 
-    // -------------------------------------------------------------
+    // =============================================================
     // STYLE DEFINITIONS
-    // -------------------------------------------------------------
+    // =============================================================
     // Strong Entity: Rectangle
     // Relationship: Diamond
     // ISA Hierarchy: Triangle
     // Attribute: Ellipse
     // Primary Key: Underlined in HTML label
-    // -------------------------------------------------------------
+    // =============================================================
 
-    // Top Level: Customer, Assembly, Department, Process
-    subgraph cluster_top {
+    subgraph cluster_left {
         style=invis;
+        // Customer
+        Customer [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<<b>CUSTOMER</b>>];
+        cust_name [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>name</u>>];
+        cust_addr [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="address"];
+        cust_cat  [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="category"];
+        Customer -> cust_name; Customer -> cust_addr; Customer -> cust_cat;
 
-        Customer [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<
-            <table border="0" cellborder="0" cellspacing="2">
-                <tr><td><b>CUSTOMER</b></td></tr>
-            </table>
-        >];
+        rel_orders [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Orders"];
+        Customer -> rel_orders [arrowhead=normal, label="  1"];
 
-        Assembly [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<
-            <table border="0" cellborder="0" cellspacing="2">
-                <tr><td><b>ASSEMBLY</b></td></tr>
-            </table>
-        >];
+        Assembly [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<<b>ASSEMBLY</b>>];
+        asm_id      [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>assembly-id</u>>];
+        asm_date    [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="date-ordered"];
+        asm_details [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="assembly-details"];
+        Assembly -> asm_id; Assembly -> asm_date; Assembly -> asm_details;
+        rel_orders -> Assembly [arrowhead=none, penwidth=2.5, label="  N (total)"];
 
-        Department [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<
-            <table border="0" cellborder="0" cellspacing="2">
-                <tr><td><b>DEPARTMENT</b></td></tr>
-            </table>
-        >];
+        // Job
+        Job [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<<b>JOB</b>>];
+        job_no       [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>job-no</u>>];
+        job_commence [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="commence-date"];
+        job_complete [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="complete-date"];
+        Job -> job_no; Job -> job_commence; Job -> job_complete;
 
-        Process [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<
-            <table border="0" cellborder="0" cellspacing="2">
-                <tr><td><b>PROCESS</b></td></tr>
-            </table>
-        >];
+        rel_job_asm [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Job_Assembly"];
+        Job -> rel_job_asm [arrowhead=none, penwidth=2.5, label="  N (total)"];
+        rel_job_asm -> Assembly [arrowhead=normal, label="  1"];
+
+        isa_job [shape=triangle, style=filled, fillcolor="#fef7e0", color="#f9ab00", label="ISA\n(d)"];
+        Job -> isa_job [arrowhead=none, label="partial"];
+        Cut_Job   [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Cut_Job"];
+        Paint_Job [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Paint_Job"];
+        Fit_Job   [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Fit_Job"];
+        isa_job -> {Cut_Job Paint_Job Fit_Job};
+
+        cj_mach_used [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="machine-type-used"];
+        cj_time_used [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="machine-time-used"];
+        cj_mat_used  [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="material-used"];
+        cj_labor     [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="labor-time"];
+        Cut_Job -> cj_mach_used; Cut_Job -> cj_time_used; Cut_Job -> cj_mat_used; Cut_Job -> cj_labor;
+
+        pj_color [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="color"];
+        pj_vol   [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="volume"];
+        pj_labor [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="labor-time"];
+        Paint_Job -> pj_color; Paint_Job -> pj_vol; Paint_Job -> pj_labor;
+
+        fj_labor [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="labor-time"];
+        Fit_Job -> fj_labor;
+
+        // Cost Transaction
+        Cost_Transaction [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<<b>COST_TRANSACTION</b>>];
+        trans_no   [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>trans-no</u>>];
+        trans_cost [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="sup-cost"];
+        Cost_Transaction -> trans_no; Cost_Transaction -> trans_cost;
+
+        rel_records [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Records_Against"];
+        Cost_Transaction -> rel_records [arrowhead=none, penwidth=2.5, label="  N (total)"];
+        rel_records -> Job [arrowhead=normal, label="  1"];
     }
 
-    // Customer Attributes
-    cust_name [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>name</u>>];
-    cust_addr [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="address"];
-    cust_cat  [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="category"];
-    Customer -> cust_name;
-    Customer -> cust_addr;
-    Customer -> cust_cat;
+    subgraph cluster_right {
+        style=invis;
+        // Department
+        Department [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<<b>DEPARTMENT</b>>];
+        dept_no   [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>dept-no</u>>];
+        dept_data [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="dept-data"];
+        Department -> dept_no; Department -> dept_data;
 
-    // Assembly Attributes
-    asm_id      [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>assembly-id</u>>];
-    asm_date    [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="date-ordered"];
-    asm_details [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="assembly-details"];
-    Assembly -> asm_id;
-    Assembly -> asm_date;
-    Assembly -> asm_details;
+        rel_supervises [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Supervises"];
+        Department -> rel_supervises [arrowhead=normal, label="  1"];
 
-    // Department Attributes
-    dept_no   [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>dept-no</u>>];
-    dept_data [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="dept-data"];
-    Department -> dept_no;
-    Department -> dept_data;
+        Process [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<<b>PROCESS</b>>];
+        proc_id   [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>process-id</u>>];
+        proc_data [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="process-data"];
+        Process -> proc_id; Process -> proc_data;
+        rel_supervises -> Process [arrowhead=none, penwidth=2.5, label="  N (total)"];
 
-    // Process Attributes
-    proc_id   [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>process-id</u>>];
-    proc_data [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="process-data"];
-    Process -> proc_id;
-    Process -> proc_data;
+        isa_process [shape=triangle, style=filled, fillcolor="#fef7e0", color="#f9ab00", label="ISA\n(d)"];
+        Process -> isa_process [arrowhead=none, label="partial"];
+        Fit_Process   [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Fit_Process"];
+        Paint_Process [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Paint_Process"];
+        Cut_Process   [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Cut_Process"];
+        isa_process -> {Fit_Process Paint_Process Cut_Process};
 
-    // Relationships: Orders & Supervises
-    rel_orders [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Orders"];
-    rel_supervises [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Supervises"];
+        fit_type [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="fit-type"];
+        Fit_Process -> fit_type;
+        paint_type   [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="paint-type"];
+        paint_method [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="painting-method"];
+        Paint_Process -> paint_type; Paint_Process -> paint_method;
+        cut_type     [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="cutting-type"];
+        cut_machine  [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="machine-type"];
+        Cut_Process -> cut_type; Cut_Process -> cut_machine;
 
-    // Customer (1) Orders Assembly (N) - total on Assembly
-    Customer -> rel_orders [arrowhead=normal, label="  1"];
-    rel_orders -> Assembly [arrowhead=none, penwidth=2.5, label="  N (total)"];
+        // Account
+        Account [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<<b>ACCOUNT</b>>];
+        act_no    [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>account-no</u>>];
+        act_date  [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="date-established"];
+        Account -> act_no; Account -> act_date;
 
-    // Department (1) Supervises Process (N) - total on Process
-    Department -> rel_supervises [arrowhead=normal, label="  1"];
-    rel_supervises -> Process [arrowhead=none, penwidth=2.5, label="  N (total)"];
+        isa_account [shape=triangle, style=filled, fillcolor="#fef7e0", color="#f9ab00", label="ISA\n(d)"];
+        Account -> isa_account [arrowhead=none, label="partial"];
+        Assembly_Account   [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Assembly_Account"];
+        Department_Account [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Department_Account"];
+        Process_Account    [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Process_Account"];
+        isa_account -> {Assembly_Account Department_Account Process_Account};
 
-    // Assembly to Process: Planned Manufacture Association
+        act_det1 [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="details-1 (cost)"];
+        act_det2 [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="details-2 (cost)"];
+        act_det3 [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="details-3 (cost)"];
+        Assembly_Account -> act_det1; Department_Account -> act_det2; Process_Account -> act_det3;
+
+        rel_act_asm  [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Tracks_Assembly"];
+        rel_act_dept [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Tracks_Department"];
+        rel_act_proc [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Tracks_Process"];
+        Assembly_Account -> rel_act_asm [arrowhead=none]; rel_act_asm -> Assembly [arrowhead=normal, label="  1"];
+        Department_Account -> rel_act_dept [arrowhead=none]; rel_act_dept -> Department [arrowhead=normal, label="  1"];
+        Process_Account -> rel_act_proc [arrowhead=none]; rel_act_proc -> Process [arrowhead=normal, label="  1"];
+    }
+
+    // Cross-cluster connections
     rel_manufacture [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Manufacture"];
     Assembly -> rel_manufacture [arrowhead=none, label="  M"];
     rel_manufacture -> Process [arrowhead=none, label="  N"];
 
-    // Process ISA Hierarchy (Disjoint, Partial)
-    isa_process [shape=triangle, style=filled, fillcolor="#fef7e0", color="#f9ab00", label="ISA\n(d)"];
-    Process -> isa_process [arrowhead=none, label="partial"];
-
-    Fit_Process [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Fit_Process"];
-    Paint_Process [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Paint_Process"];
-    Cut_Process [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Cut_Process"];
-
-    isa_process -> Fit_Process;
-    isa_process -> Paint_Process;
-    isa_process -> Cut_Process;
-
-    fit_type [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="fit-type"];
-    Fit_Process -> fit_type;
-
-    paint_type   [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="paint-type"];
-    paint_method [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="painting-method"];
-    Paint_Process -> paint_type;
-    Paint_Process -> paint_method;
-
-    cut_type     [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="cutting-type"];
-    cut_machine  [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="machine-type"];
-    Cut_Process -> cut_type;
-    Cut_Process -> cut_machine;
-
-    // Middle Level: Job Entity Set (connects Assembly and Process execution)
-    Job [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<
-        <table border="0" cellborder="0" cellspacing="2">
-            <tr><td><b>JOB</b></td></tr>
-        </table>
-    >];
-
-    job_no       [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>job-no</u>>];
-    job_commence [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="commence-date"];
-    job_complete [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="complete-date"];
-    Job -> job_no;
-    Job -> job_commence;
-    Job -> job_complete;
-
-    // Relationships connecting Job to Assembly and Process
-    rel_job_asm [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Job_Assembly"];
     rel_job_proc [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Job_Process"];
-
-    Job -> rel_job_asm [arrowhead=none, penwidth=2.5, label="  N (total)"];
-    rel_job_asm -> Assembly [arrowhead=normal, label="  1"];
-
     Job -> rel_job_proc [arrowhead=none, penwidth=2.5, label="  N (total)"];
     rel_job_proc -> Process [arrowhead=normal, label="  1"];
-
-    // Job ISA Hierarchy (Disjoint, Partial)
-    isa_job [shape=triangle, style=filled, fillcolor="#fef7e0", color="#f9ab00", label="ISA\n(d)"];
-    Job -> isa_job [arrowhead=none, label="partial"];
-
-    Cut_Job   [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Cut_Job"];
-    Paint_Job [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Paint_Job"];
-    Fit_Job   [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Fit_Job"];
-
-    isa_job -> Cut_Job;
-    isa_job -> Paint_Job;
-    isa_job -> Fit_Job;
-
-    cj_mach_used [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="machine-type-used"];
-    cj_time_used [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="machine-time-used"];
-    cj_mat_used  [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="material-used"];
-    cj_labor     [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="labor-time"];
-    Cut_Job -> cj_mach_used;
-    Cut_Job -> cj_time_used;
-    Cut_Job -> cj_mat_used;
-    Cut_Job -> cj_labor;
-
-    pj_color [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="color"];
-    pj_vol   [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="volume"];
-    pj_labor [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="labor-time"];
-    Paint_Job -> pj_color;
-    Paint_Job -> pj_vol;
-    Paint_Job -> pj_labor;
-
-    fj_labor [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="labor-time"];
-    Fit_Job -> fj_labor;
-
-    // Bottom Level: Account, Subclasses & Cost_Transaction
-    Account [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<
-        <table border="0" cellborder="0" cellspacing="2">
-            <tr><td><b>ACCOUNT</b></td></tr>
-        </table>
-    >];
-
-    act_no    [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>account-no</u>>];
-    act_date  [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="date-established"];
-    Account -> act_no;
-    Account -> act_date;
-
-    // Account ISA Hierarchy (Disjoint, Partial)
-    isa_account [shape=triangle, style=filled, fillcolor="#fef7e0", color="#f9ab00", label="ISA\n(d)"];
-    Account -> isa_account [arrowhead=none, label="partial"];
-
-    Assembly_Account   [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Assembly_Account"];
-    Department_Account [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Department_Account"];
-    Process_Account    [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", label="Process_Account"];
-
-    isa_account -> Assembly_Account;
-    isa_account -> Department_Account;
-    isa_account -> Process_Account;
-
-    act_det1 [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="details-1 (cost)"];
-    act_det2 [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="details-2 (cost)"];
-    act_det3 [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="details-3 (cost)"];
-    Assembly_Account -> act_det1;
-    Department_Account -> act_det2;
-    Process_Account -> act_det3;
-
-    // Account Subclass associations with target entities (1:1 optional/total)
-    rel_act_asm  [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Tracks_Assembly"];
-    rel_act_dept [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Tracks_Department"];
-    rel_act_proc [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Tracks_Process"];
-
-    Assembly_Account -> rel_act_asm [arrowhead=none];
-    rel_act_asm -> Assembly [arrowhead=normal, label="  1"];
-
-    Department_Account -> rel_act_dept [arrowhead=none];
-    rel_act_dept -> Department [arrowhead=normal, label="  1"];
-
-    Process_Account -> rel_act_proc [arrowhead=none];
-    rel_act_proc -> Process [arrowhead=normal, label="  1"];
-
-    // Cost_Transaction Entity
-    Cost_Transaction [shape=rectangle, style="filled", fillcolor="#d2e3fc", color="#1a73e8", penwidth=1.5, label=<
-        <table border="0" cellborder="0" cellspacing="2">
-            <tr><td><b>COST_TRANSACTION</b></td></tr>
-        </table>
-    >];
-
-    trans_no  [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label=<<u>trans-no</u>>];
-    trans_cost [shape=ellipse, style=filled, fillcolor="#f1f3f4", color="#5f6368", label="sup-cost"];
-    Cost_Transaction -> trans_no;
-    Cost_Transaction -> trans_cost;
-
-    // Cost_Transaction Recorded Against Job
-    rel_records [shape=diamond, style=filled, fillcolor="#e8f0fe", color="#1a73e8", label="Records_Against"];
-    Cost_Transaction -> rel_records [arrowhead=none, penwidth=2.5, label="  N (total)"];
-    rel_records -> Job [arrowhead=normal, label="  1"];
 }
